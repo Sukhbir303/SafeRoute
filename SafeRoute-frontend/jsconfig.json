@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-native"
+  },
+  "exclude": ["node_modules", "android", "ios"]
+}
