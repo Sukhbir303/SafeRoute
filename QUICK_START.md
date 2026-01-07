@@ -33,20 +33,26 @@ npx react-native start
 #### **Step 2: Run Your App** (Open a NEW terminal)
 
 **Option A: Android Emulator**
+
 ```bash
 cd Safe-Route/SafeRoute-frontend
 npx react-native run-android
 ```
+
 **Prerequisites:**
+
 - Android Studio installed
 - Android Emulator running (AVD Manager → Start emulator)
 
 **Option B: Android Physical Device**
+
 ```bash
 cd Safe-Route/SafeRoute-frontend
 npx react-native run-android
 ```
+
 **Prerequisites:**
+
 1. Enable **Developer Options** on your Android phone:
    - Go to Settings → About Phone
    - Tap "Build Number" 7 times
@@ -58,19 +64,25 @@ npx react-native run-android
 5. Verify connection: `adb devices` (should show your device)
 
 **Option C: iOS Simulator (Mac only)**
+
 ```bash
 cd Safe-Route/SafeRoute-frontend
 npx react-native run-ios
 ```
+
 **Prerequisites:**
+
 - Xcode and iOS Simulator installed
 
 **Option D: iOS Physical Device (Mac only)**
+
 ```bash
 cd Safe-Route/SafeRoute-frontend
 npx react-native run-ios --device
 ```
+
 **Prerequisites:**
+
 1. Apple Developer account
 2. Device registered in Xcode
 3. Provisioning profile configured
