@@ -5,5 +5,6 @@ export { default as HomeScreen } from './HomeScreen';
 export { default as SignUpScreen } from './Auth/SignUpScreen';
 export { default as LoginScreen } from './Auth/LoginScreen';
 
+export { default as ProfileForm } from './ProfileForm';
 // Add more screen exports here
 // export { default as ProfileScreen } from './ProfileScreen';
