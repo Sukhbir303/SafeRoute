@@ -8,7 +8,7 @@
 import React from 'react';
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import ProfileForm from './src/screens/ProfileForm';
+import Setting from './src/screens/Setting';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -17,7 +17,7 @@ function App() {
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <View style={styles.container}>
-        <ProfileForm />
+        <Setting />
       </View>
     </SafeAreaProvider>
   );
