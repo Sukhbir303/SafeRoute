@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { StatusBar, StyleSheet, useColorScheme, View, Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import CarouselScreen from './src/screens/CarouselScreen';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+import Setting from './src/screens/Setting';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -15,6 +22,9 @@ function App() {
       ) : (
         <AppContent />
       )}
+      <View style={styles.container}>
+        <Setting />
+      </View>
     </SafeAreaProvider>
   );
 }
