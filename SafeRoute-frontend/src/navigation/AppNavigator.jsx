@@ -5,16 +5,42 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { HomeScreen } from '../screens';
+import { HomeScreen, SignUpScreen, LoginScreen, ProfileForm } from '../screens';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        {/* Add more screens here */}
+      <Stack.Navigator initialRouteName="SignUp">
+        {/* Auth Screens */}
+        <Stack.Screen 
+          name="SignUp" 
+          component={SignUpScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name="Login" 
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        
+        {/* Profile Setup (after signup) */}
+        <Stack.Screen 
+          name="ProfileForm" 
+          component={ProfileForm}
+          options={{ 
+            headerShown: false,
+            gestureEnabled: false, // Prevent going back
+          }}
+        />
+        
+        {/* Main App Screens */}
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
