@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 
-const ProfileForm = () => {
+const ProfileForm = ({ navigation }) => {
   // State for form fields
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [fullName, setFullName] = useState('');
@@ -100,7 +100,15 @@ const ProfileForm = () => {
     }
 
     // Form submission logic here
-    Alert.alert('Success', 'Profile saved successfully!');
+    Alert.alert('Success', 'Profile saved successfully!', [
+      {
+        text: 'OK',
+        onPress: () => {
+          // Navigate to Home screen
+          navigation.replace('Home');
+        },
+      },
+    ]);
   };
 
   return (

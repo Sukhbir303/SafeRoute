@@ -5,7 +5,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { HomeScreen, SignUpScreen, LoginScreen } from '../screens';
+import { HomeScreen, SignUpScreen, LoginScreen, ProfileForm } from '../screens';
 
 const Stack = createStackNavigator();
 
@@ -25,8 +25,22 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         
+        {/* Profile Setup (after signup) */}
+        <Stack.Screen 
+          name="ProfileForm" 
+          component={ProfileForm}
+          options={{ 
+            headerShown: false,
+            gestureEnabled: false, // Prevent going back
+          }}
+        />
+        
         {/* Main App Screens */}
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

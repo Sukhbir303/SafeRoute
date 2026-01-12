@@ -11,7 +11,6 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { COLORS } from '../../constants';
 import { authService } from '../../services/firebase.service';
 
 const LoginScreen = ({ navigation }) => {
@@ -152,19 +151,17 @@ const LoginScreen = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
+        <View style={styles.formContainer}>
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to continue to SafeRoute</Text>
-        </View>
 
-        <View style={styles.form}>
           {/* Email or Phone Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email or Phone Number</Text>
+            <Text style={styles.label}>Email or Phone Number *</Text>
             <TextInput
               style={[styles.input, errors.emailOrPhone && styles.inputError]}
               placeholder="Enter email or phone number"
-              placeholderTextColor={COLORS.mutedGray}
+              placeholderTextColor="#9AA6B8"
               value={formData.emailOrPhone}
               onChangeText={(value) => handleInputChange('emailOrPhone', value)}
               keyboardType="email-address"
@@ -177,7 +174,7 @@ const LoginScreen = ({ navigation }) => {
 
           {/* Password Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>Password *</Text>
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[
@@ -186,7 +183,7 @@ const LoginScreen = ({ navigation }) => {
                   errors.password && styles.inputError,
                 ]}
                 placeholder="Enter your password"
-                placeholderTextColor={COLORS.mutedGray}
+                placeholderTextColor="#9AA6B8"
                 value={formData.password}
                 onChangeText={(value) => handleInputChange('password', value)}
                 secureTextEntry={!passwordVisible}
@@ -221,7 +218,7 @@ const LoginScreen = ({ navigation }) => {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={COLORS.softWhite} />
+              <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.loginButtonText}>Log In</Text>
             )}
@@ -259,50 +256,50 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#F0F4F8',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 80,
-    paddingBottom: 40,
+    justifyContent: 'center',
   },
-  header: {
-    marginBottom: 40,
+  formContainer: {
+    padding: 20,
+    paddingVertical: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 8,
+    color: '#2B344B',
+    marginBottom: 6,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-  },
-  form: {
-    flex: 1,
+    fontSize: 15,
+    color: '#5F6E7D',
+    marginBottom: 24,
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: '#2B344B',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: COLORS.lightGray,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: COLORS.text,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: '#E4F2FB',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#2B344B',
   },
   inputError: {
-    borderColor: COLORS.alertRed,
+    borderColor: '#E63946',
   },
   passwordContainer: {
     position: 'relative',
@@ -312,40 +309,35 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: 'absolute',
-    right: 16,
-    top: 16,
+    right: 12,
+    top: 10,
   },
   eyeIconText: {
     fontSize: 20,
   },
   errorText: {
-    color: COLORS.alertRed,
+    color: '#E63946',
     fontSize: 12,
     marginTop: 4,
   },
   forgotPasswordContainer: {
     alignItems: 'flex-end',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   forgotPasswordText: {
-    color: COLORS.tealGreen,
+    color: '#1DB9A0',
     fontSize: 14,
     fontWeight: '600',
   },
   loginButton: {
-    backgroundColor: COLORS.tealGreen,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#1DB9A0',
+    padding: 14,
+    borderRadius: 8,
     alignItems: 'center',
-    shadowColor: COLORS.tealGreen,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
   loginButtonText: {
-    color: COLORS.background,
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
   },
   buttonDisabled: {
@@ -354,46 +346,46 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: 20,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: COLORS.mutedGray,
+    backgroundColor: '#E4F2FB',
   },
   dividerText: {
-    color: COLORS.textSecondary,
+    color: '#5F6E7D',
     paddingHorizontal: 16,
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: COLORS.background,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 14,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.mutedGray,
+    borderWidth: 1,
+    borderColor: '#1DB9A0',
   },
   googleButtonText: {
-    color: COLORS.text,
+    color: '#1DB9A0',
     fontSize: 16,
     fontWeight: '600',
   },
   signUpLinkContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 20,
+    marginBottom: 10,
   },
   signUpLinkText: {
-    color: COLORS.textSecondary,
+    color: '#5F6E7D',
     fontSize: 14,
   },
   signUpLink: {
-    color: COLORS.tealGreen,
+    color: '#1DB9A0',
     fontSize: 14,
     fontWeight: 'bold',
   },
 });
 
 export default LoginScreen;
-

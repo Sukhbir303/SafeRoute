@@ -11,7 +11,6 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { COLORS } from '../../constants';
 import { authService } from '../../services/firebase.service';
 import { requestPermissions } from '../../utils/permissions';
 
@@ -44,6 +43,30 @@ const SignUpScreen = ({ navigation }) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     return passwordRegex.test(password);
   };
+
+  // Calculate password strength
+  const getPasswordStrength = (password) => {
+    if (!password) return { strength: 0, label: '', color: '#9AA6B8' };
+    
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+    if (strength <= 2) {
+      return { strength, label: 'Weak', color: '#E63946' };
+    } else if (strength === 3) {
+      return { strength, label: 'Fair', color: '#F4A261' };
+    } else if (strength === 4) {
+      return { strength, label: 'Good', color: '#1DB9A0' };
+    } else {
+      return { strength, label: 'Strong', color: '#2ECC71' };
+    }
+  };
+
+  const passwordStrength = getPasswordStrength(formData.password);
 
   // Handle input change
   const handleInputChange = (field, value) => {
@@ -110,8 +133,8 @@ const SignUpScreen = ({ navigation }) => {
             onPress: async () => {
               // Request permissions after successful signup
               await requestPermissions();
-              // Navigate to home or onboarding
-              navigation.navigate('Home');
+              // Navigate to ProfileForm
+              navigation.replace('ProfileForm');
             },
           },
         ]
@@ -137,7 +160,7 @@ const SignUpScreen = ({ navigation }) => {
             text: 'OK',
             onPress: async () => {
               await requestPermissions();
-              navigation.navigate('Home');
+              navigation.replace('ProfileForm');
             },
           },
         ]
@@ -159,19 +182,17 @@ const SignUpScreen = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
+        <View style={styles.formContainer}>
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Sign up to get started with SafeRoute</Text>
-        </View>
 
-        <View style={styles.form}>
           {/* Phone Number Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Phone Number</Text>
+            <Text style={styles.label}>Phone Number *</Text>
             <TextInput
               style={[styles.input, errors.phoneNumber && styles.inputError]}
               placeholder="Enter your phone number"
-              placeholderTextColor={COLORS.mutedGray}
+              placeholderTextColor="#9AA6B8"
               value={formData.phoneNumber}
               onChangeText={(value) => handleInputChange('phoneNumber', value)}
               keyboardType="phone-pad"
@@ -184,11 +205,11 @@ const SignUpScreen = ({ navigation }) => {
 
           {/* Email Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email Address</Text>
+            <Text style={styles.label}>Email Address *</Text>
             <TextInput
               style={[styles.input, errors.email && styles.inputError]}
               placeholder="Enter your email"
-              placeholderTextColor={COLORS.mutedGray}
+              placeholderTextColor="#9AA6B8"
               value={formData.email}
               onChangeText={(value) => handleInputChange('email', value)}
               keyboardType="email-address"
@@ -201,7 +222,7 @@ const SignUpScreen = ({ navigation }) => {
 
           {/* Password Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Create Password</Text>
+            <Text style={styles.label}>Create Password *</Text>
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[
@@ -210,7 +231,7 @@ const SignUpScreen = ({ navigation }) => {
                   errors.password && styles.inputError,
                 ]}
                 placeholder="Create a strong password"
-                placeholderTextColor={COLORS.mutedGray}
+                placeholderTextColor="#9AA6B8"
                 value={formData.password}
                 onChangeText={(value) => handleInputChange('password', value)}
                 secureTextEntry={!passwordVisible}
@@ -225,6 +246,27 @@ const SignUpScreen = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
+            
+            {/* Password Strength Indicator */}
+            {formData.password && (
+              <View style={styles.strengthContainer}>
+                <View style={styles.strengthBarContainer}>
+                  <View
+                    style={[
+                      styles.strengthBar,
+                      {
+                        width: `${(passwordStrength.strength / 5) * 100}%`,
+                        backgroundColor: passwordStrength.color,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.strengthLabel, { color: passwordStrength.color }]}>
+                  {passwordStrength.label}
+                </Text>
+              </View>
+            )}
+            
             {errors.password && (
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
@@ -232,7 +274,7 @@ const SignUpScreen = ({ navigation }) => {
 
           {/* Confirm Password Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Confirm Password</Text>
+            <Text style={styles.label}>Confirm Password *</Text>
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[
@@ -241,7 +283,7 @@ const SignUpScreen = ({ navigation }) => {
                   errors.confirmPassword && styles.inputError,
                 ]}
                 placeholder="Re-enter your password"
-                placeholderTextColor={COLORS.mutedGray}
+                placeholderTextColor="#9AA6B8"
                 value={formData.confirmPassword}
                 onChangeText={(value) => handleInputChange('confirmPassword', value)}
                 secureTextEntry={!confirmPasswordVisible}
@@ -268,7 +310,7 @@ const SignUpScreen = ({ navigation }) => {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={COLORS.softWhite} />
+              <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.signUpButtonText}>Sign Up</Text>
             )}
@@ -306,50 +348,50 @@ const SignUpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#F0F4F8',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
+    justifyContent: 'center',
   },
-  header: {
-    marginBottom: 32,
+  formContainer: {
+    padding: 20,
+    paddingVertical: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 8,
+    color: '#2B344B',
+    marginBottom: 6,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-  },
-  form: {
-    flex: 1,
+    fontSize: 15,
+    color: '#5F6E7D',
+    marginBottom: 24,
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: '#2B344B',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: COLORS.lightGray,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: COLORS.text,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: '#E4F2FB',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#2B344B',
   },
   inputError: {
-    borderColor: COLORS.alertRed,
+    borderColor: '#E63946',
   },
   passwordContainer: {
     position: 'relative',
@@ -359,32 +401,49 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: 'absolute',
-    right: 16,
-    top: 16,
+    right: 12,
+    top: 10,
   },
   eyeIconText: {
     fontSize: 20,
   },
+  strengthContainer: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  strengthBarContainer: {
+    flex: 1,
+    height: 4,
+    backgroundColor: '#E4F2FB',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  strengthBar: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  strengthLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    minWidth: 50,
+  },
   errorText: {
-    color: COLORS.alertRed,
+    color: '#E63946',
     fontSize: 12,
     marginTop: 4,
   },
   signUpButton: {
-    backgroundColor: COLORS.tealGreen,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#1DB9A0',
+    padding: 14,
+    borderRadius: 8,
     alignItems: 'center',
-    marginTop: 8,
-    shadowColor: COLORS.tealGreen,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    marginTop: 4,
   },
   signUpButtonText: {
-    color: COLORS.background,
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
   },
   buttonDisabled: {
@@ -393,46 +452,46 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: 20,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: COLORS.mutedGray,
+    backgroundColor: '#E4F2FB',
   },
   dividerText: {
-    color: COLORS.textSecondary,
+    color: '#5F6E7D',
     paddingHorizontal: 16,
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: COLORS.background,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 14,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.mutedGray,
+    borderWidth: 1,
+    borderColor: '#1DB9A0',
   },
   googleButtonText: {
-    color: COLORS.text,
+    color: '#1DB9A0',
     fontSize: 16,
     fontWeight: '600',
   },
   loginLinkContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 20,
+    marginBottom: 10,
   },
   loginLinkText: {
-    color: COLORS.textSecondary,
+    color: '#5F6E7D',
     fontSize: 14,
   },
   loginLink: {
-    color: COLORS.tealGreen,
+    color: '#1DB9A0',
     fontSize: 14,
     fontWeight: 'bold',
   },
 });
 
 export default SignUpScreen;
-
