@@ -3,14 +3,20 @@
  * @format
  */
 
-import React from 'react';
-import {StatusBar} from 'react-native';
+import React, {useState} from 'react';
+import {StatusBar, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ThemeProvider, useTheme} from './src/context/ThemeContext';
 import AppNavigator from './src/navigation/AppNavigator';
+import CarouselScreen from './src/screens/CarouselScreen';
 
 function AppContent() {
   const {theme} = useTheme();
+  const [showCarousel, setShowCarousel] = useState(true);
+
+  if (showCarousel) {
+    return <CarouselScreen onFinish={() => setShowCarousel(false)} />;
+  }
 
   return (
     <>
