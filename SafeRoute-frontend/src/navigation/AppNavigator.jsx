@@ -9,6 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import { RouteProvider } from '../context/RouteContext';
+import FloatingNavbar from '../components/FloatingNavbar';
 
 // Import Screens
 import CarouselScreen from '../screens/CarouselScreen';
@@ -22,57 +23,10 @@ import Setting from '../screens/Setting';
 
 const Stack = createStackNavigator();
 
-// Onboarding Stack - for unauthenticated users
-const OnboardingStack = () => {
-  const { hasSeenCarousel } = useAuth();
-
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        cardStyle: { backgroundColor: 'white' },
-      }}>
-      {!hasSeenCarousel && (
-        <Stack.Screen name="Carousel" component={CarouselScreen} />
-      )}
-      <Stack.Screen name="Signup" component={SignUpScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="ProfileForm" component={ProfileForm} />
-    </Stack.Navigator>
-  );
-};
-
-// App Stack - for authenticated users
-const AppStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        cardStyle: { backgroundColor: 'white' },
-      }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen 
-        name="SearchRoute" 
-        component={SearchRouteScreen}
-        options={{ headerShown: true, title: 'Search Route' }}
-      />
-      <Stack.Screen 
-        name="Circle" 
-        component={CircleScreen}
-        options={{ headerShown: true, title: 'My Circle' }}
-      />
-      <Stack.Screen 
-        name="Settings" 
-        component={Setting}
-        options={{ headerShown: true, title: 'Settings' }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-// Root Navigator - decides which stack to show
+// Root Navigator - unified stack for all screens
 const RootNavigator = () => {
-  const { isAuthenticated, needsProfile, isLoading } = useAuth();
+  const { isAuthenticated, needsProfile, isLoading, hasSeenCarousel } =
+    useAuth();
 
   // Show loading screen while checking auth state
   if (isLoading) {
@@ -84,18 +38,44 @@ const RootNavigator = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {isAuthenticated ? (
-        // User is authenticated - show app
-        <Stack.Screen name="App" component={AppStack} />
-      ) : needsProfile ? (
-        // User signed up but needs to complete profile
-        <Stack.Screen name="ProfileForm" component={ProfileForm} />
-      ) : (
-        // User is not authenticated - show onboarding
-        <Stack.Screen name="Onboarding" component={OnboardingStack} />
-      )}
-    </Stack.Navigator>
+    <>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { backgroundColor: 'white' },
+        }}
+      >
+        {/* Onboarding Flow */}
+        {!isAuthenticated && !needsProfile && !hasSeenCarousel && (
+          <Stack.Screen name="CarouselScreen" component={CarouselScreen} />
+        )}
+        {!isAuthenticated && !needsProfile && (
+          <>
+            <Stack.Screen name="SignupScreen" component={SignUpScreen} />
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          </>
+        )}
+        {!isAuthenticated && needsProfile && (
+          <Stack.Screen name="ProfileFormScreen" component={ProfileForm} />
+        )}
+
+        {/* Authenticated App Flow */}
+        {isAuthenticated && (
+          <>
+            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            <Stack.Screen
+              name="SearchRouteScreen"
+              component={SearchRouteScreen}
+            />
+            <Stack.Screen name="CircleScreen" component={CircleScreen} />
+            <Stack.Screen name="SettingsScreen" component={Setting} />
+          </>
+        )}
+      </Stack.Navigator>
+
+      {/* Global FloatingNavbar - only show for authenticated users */}
+      {isAuthenticated && <FloatingNavbar />}
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,22 +11,22 @@ import {
   Animated,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import {useNavigation} from '@react-navigation/native';
-import {useTheme} from '../context/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../context/ThemeContext';
 import useHomeState from '../hooks/useHomeState';
 import SearchBar from '../components/SearchBar';
 import DraggableSOS from '../components/DraggableSOS';
 import MapFilters from '../components/MapFilters';
 import CustomDrawerContent from '../components/CustomDrawerContent';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const {
     showHeatmap,
     showVolunteers,
@@ -50,28 +50,38 @@ const HomeScreen = () => {
 
   // Hardcoded marker data
   const policeStations = [
-    {id: 1, title: 'Central Police Station', latitude: 19.080, longitude: 72.880},
-    {id: 2, title: 'West Police Station', latitude: 19.070, longitude: 72.870},
-    {id: 3, title: 'East Police Station', latitude: 19.085, longitude: 72.885},
+    {
+      id: 1,
+      title: 'Central Police Station',
+      latitude: 19.08,
+      longitude: 72.88,
+    },
+    { id: 2, title: 'West Police Station', latitude: 19.07, longitude: 72.87 },
+    {
+      id: 3,
+      title: 'East Police Station',
+      latitude: 19.085,
+      longitude: 72.885,
+    },
   ];
 
   const hospitals = [
-    {id: 1, title: 'City Hospital', latitude: 19.078, longitude: 72.875},
-    {id: 2, title: 'Medical Center', latitude: 19.072, longitude: 72.882},
-    {id: 3, title: 'Health Clinic', latitude: 19.082, longitude: 72.872},
+    { id: 1, title: 'City Hospital', latitude: 19.078, longitude: 72.875 },
+    { id: 2, title: 'Medical Center', latitude: 19.072, longitude: 72.882 },
+    { id: 3, title: 'Health Clinic', latitude: 19.082, longitude: 72.872 },
   ];
 
   const volunteers = [
-    {id: 1, title: 'Volunteer A', latitude: 19.074, longitude: 72.878},
-    {id: 2, title: 'Volunteer B', latitude: 19.079, longitude: 72.873},
-    {id: 3, title: 'Volunteer C', latitude: 19.083, longitude: 72.881},
-    {id: 4, title: 'Volunteer D', latitude: 19.071, longitude: 72.876},
+    { id: 1, title: 'Volunteer A', latitude: 19.074, longitude: 72.878 },
+    { id: 2, title: 'Volunteer B', latitude: 19.079, longitude: 72.873 },
+    { id: 3, title: 'Volunteer C', latitude: 19.083, longitude: 72.881 },
+    { id: 4, title: 'Volunteer D', latitude: 19.071, longitude: 72.876 },
   ];
 
   const dangerZones = [
-    {id: 1, title: 'High Crime Area', latitude: 19.077, longitude: 72.879},
-    {id: 2, title: 'Dark Alley', latitude: 19.081, longitude: 72.874},
-    {id: 3, title: 'Unsafe Zone', latitude: 19.073, longitude: 72.883},
+    { id: 1, title: 'High Crime Area', latitude: 19.077, longitude: 72.879 },
+    { id: 2, title: 'Dark Alley', latitude: 19.081, longitude: 72.874 },
+    { id: 3, title: 'Unsafe Zone', latitude: 19.073, longitude: 72.883 },
   ];
 
   useEffect(() => {
@@ -106,8 +116,8 @@ const HomeScreen = () => {
     try {
       Geolocation.getCurrentPosition(
         position => {
-          const {latitude, longitude} = position.coords;
-          setUserLocation({latitude, longitude});
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
           setMapRegion({
             latitude,
             longitude,
@@ -125,7 +135,7 @@ const HomeScreen = () => {
             longitudeDelta: 0.0421,
           });
         },
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
       );
     } catch (error) {
       console.log('Geolocation error:', error);
@@ -168,8 +178,9 @@ const HomeScreen = () => {
       <View style={styles.container}>
         {/* Menu Button */}
         <TouchableOpacity
-          style={[styles.menuButton, {backgroundColor: colors.surface}]}
-          onPress={toggleDrawer}>
+          style={[styles.menuButton, { backgroundColor: colors.surface }]}
+          onPress={toggleDrawer}
+        >
           <Icon name="menu" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
 
@@ -180,7 +191,8 @@ const HomeScreen = () => {
           region={mapRegion}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          followsUserLocation={true}>
+          followsUserLocation={true}
+        >
           {/* Police Station Markers - Always visible */}
           {showHeatmap &&
             policeStations.map(station => (
@@ -244,8 +256,8 @@ const HomeScreen = () => {
 
         {/* Floating Search Bar */}
         <View style={styles.searchBarContainer}>
-          <SearchBar 
-            onPress={() => navigation.navigate('SearchRouteScreen')} 
+          <SearchBar
+            onPress={() => navigation.navigate('SearchRouteScreen')}
             showMenu={false}
           />
         </View>
@@ -270,19 +282,24 @@ const HomeScreen = () => {
           visible={isDrawerOpen}
           transparent={true}
           animationType="none"
-          onRequestClose={toggleDrawer}>
+          onRequestClose={toggleDrawer}
+        >
           <View style={styles.modalContainer}>
-            <TouchableOpacity 
-              style={styles.drawerOverlay} 
-              activeOpacity={1} 
+            <TouchableOpacity
+              style={styles.drawerOverlay}
+              activeOpacity={1}
               onPress={toggleDrawer}
             />
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.drawerContainer,
-                { transform: [{ translateX: slideAnim }] }
-              ]}>
-              <CustomDrawerContent navigation={navigation} onClose={toggleDrawer} />
+                { transform: [{ translateX: slideAnim }] },
+              ]}
+            >
+              <CustomDrawerContent
+                navigation={navigation}
+                onClose={toggleDrawer}
+              />
             </Animated.View>
           </View>
         </Modal>
@@ -298,6 +315,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    paddingBottom: 100,
   },
   menuButton: {
     position: 'absolute',

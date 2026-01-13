@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -14,19 +14,24 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useTheme} from '../context/ThemeContext';
-import {useSelectedRoute} from '../context/RouteContext';
+import { useTheme } from '../context/ThemeContext';
+import { useSelectedRoute } from '../context/RouteContext';
 import FloatingSOS from '../components/FloatingSOS';
 
-const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journeyHistory = []}) => {
-  const {colors} = useTheme();
-  
+const SearchRouteScreen = ({
+  navigation,
+  recentTrips = [],
+  safeSpots = [],
+  journeyHistory = [],
+}) => {
+  const { colors } = useTheme();
+
   // Safely get context with fallback
   let selectedRoute = null;
   let setSelectedRoute = () => {};
-  
+
   try {
     const context = useSelectedRoute();
     selectedRoute = context.selectedRoute;
@@ -34,7 +39,7 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
   } catch (error) {
     console.warn('RouteContext not available:', error);
   }
-  
+
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -56,42 +61,67 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
   const routeOptions = [
     {
       id: 1,
-      label: "Safest Route",
+      label: 'Safest Route',
       safetyScore: 92,
-      distance: "8.2 km",
-      time: "18 min",
+      distance: '8.2 km',
+      time: '18 min',
       lighting: true,
     },
     {
       id: 2,
-      label: "Balanced Route",
+      label: 'Balanced Route',
       safetyScore: 80,
-      distance: "7.6 km",
-      time: "16 min",
+      distance: '7.6 km',
+      time: '16 min',
       lighting: true,
     },
     {
       id: 3,
-      label: "Fastest Route",
+      label: 'Fastest Route',
       safetyScore: 65,
-      distance: "6.9 km",
-      time: "14 min",
+      distance: '6.9 km',
+      time: '14 min',
       lighting: false,
     },
   ];
 
   // Placeholder data
   const helpLocations = [
-    {id: 1, title: 'Central Police Station', location: 'Main Street', time: '0.5 km'},
-    {id: 2, title: 'City Hospital', location: 'Healthcare Blvd', time: '0.8 km'},
-    {id: 3, title: 'Emergency Helpline Office', location: 'Safety Ave', time: '1.2 km'},
-    {id: 4, title: 'West Police Station', location: 'West End', time: '1.5 km'},
+    {
+      id: 1,
+      title: 'Central Police Station',
+      location: 'Main Street',
+      time: '0.5 km',
+    },
+    {
+      id: 2,
+      title: 'City Hospital',
+      location: 'Healthcare Blvd',
+      time: '0.8 km',
+    },
+    {
+      id: 3,
+      title: 'Emergency Helpline Office',
+      location: 'Safety Ave',
+      time: '1.2 km',
+    },
+    {
+      id: 4,
+      title: 'West Police Station',
+      location: 'West End',
+      time: '1.5 km',
+    },
   ];
 
   const savedAddresses = [
-    {id: 1, title: 'Favorite Coffee Shop', location: 'Downtown', time: 'Saved'},
-    {id: 2, title: 'Gym', location: 'Sports Complex', time: 'Saved'},
-    {id: 3, title: 'Library', location: 'Central District', time: 'Saved'},
+    {
+      id: 1,
+      title: 'Favorite Coffee Shop',
+      location: 'Downtown',
+      time: 'Saved',
+    },
+    { id: 2, title: 'Gym', location: 'Sports Complex', time: 'Saved' },
+    { id: 3, title: 'Library', location: 'Central District', time: 'Saved' },
   ];
 
   const handleFromFocus = () => {
@@ -113,7 +143,7 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
     setHasDismissedFromPrompt(true);
   };
 
-  const handleFromChange = (text) => {
+  const handleFromChange = text => {
     setFromLocation(text);
     setSelectedRoute(null);
     if (showLocationModal) {
@@ -122,7 +152,7 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
     }
   };
 
-  const handleToChange = (text) => {
+  const handleToChange = text => {
     setToLocation(text);
     setSelectedRoute(null);
   };
@@ -173,25 +203,39 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
     setActiveFilter('saved');
   };
 
-  const QuickActionButton = ({icon, label, onPress}) => (
+  const QuickActionButton = ({ icon, label, onPress }) => (
     <TouchableOpacity
-      style={[styles.quickActionBtn, {backgroundColor: colors.deepNavy || colors.lightGray}]}
+      style={[
+        styles.quickActionBtn,
+        { backgroundColor: colors.deepNavy || colors.lightGray },
+      ]}
       onPress={onPress}
-      activeOpacity={0.7}>
+      activeOpacity={0.7}
+    >
       <Text style={styles.quickActionIcon}>{icon}</Text>
-      <Text style={[styles.quickActionText, {color: colors.softWhite || colors.charcoal}]}>
+      <Text
+        style={[
+          styles.quickActionText,
+          { color: colors.softWhite || colors.charcoal },
+        ]}
+      >
         {label}
       </Text>
     </TouchableOpacity>
   );
 
-  const TripItem = ({title, location, time}) => (
-    <View style={[styles.listItem, {borderBottomColor: colors.mutedGray}]}>
+  const TripItem = ({ title, location, time }) => (
+    <View style={[styles.listItem, { borderBottomColor: colors.mutedGray }]}>
       <View style={styles.listItemContent}>
-        <Text style={[styles.listItemTitle, {color: colors.softWhite || colors.charcoal}]}>
+        <Text
+          style={[
+            styles.listItemTitle,
+            { color: colors.softWhite || colors.charcoal },
+          ]}
+        >
           {title}
         </Text>
-        <Text style={[styles.listItemSubtitle, {color: colors.mutedGray}]}>
+        <Text style={[styles.listItemSubtitle, { color: colors.mutedGray }]}>
           {location} • {time}
         </Text>
       </View>
@@ -199,29 +243,52 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
   );
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.deepNavy || colors.softBlue}]}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: colors.deepNavy || colors.softBlue },
+      ]}
+    >
       {/* Header with Close Button */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={[styles.closeButton, {backgroundColor: colors.mutedGray}]}
+          style={[styles.closeButton, { backgroundColor: colors.mutedGray }]}
           onPress={() => navigation.goBack()}
-          activeOpacity={0.7}>
-          <Text style={[styles.closeButtonText, {color: colors.softWhite}]}>✕</Text>
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.closeButtonText, { color: colors.softWhite }]}>
+            ✕
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, {color: colors.softWhite || colors.charcoal}]}>
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: colors.softWhite || colors.charcoal },
+          ]}
+        >
           Search Route
         </Text>
         <View style={styles.closeButton} />
       </View>
 
       {/* Fixed Input Section with Gray Background */}
-      <View style={[styles.fixedInputSection, {backgroundColor: colors.lightGray || '#e8e8e8'}]}>
+      <View
+        style={[
+          styles.fixedInputSection,
+          { backgroundColor: colors.lightGray || '#e8e8e8' },
+        ]}
+      >
         {/* Input Fields */}
         <View style={styles.inputContainer}>
-          <View style={[styles.inputRow, {backgroundColor: colors.softWhite || '#ffffff'}]}>
+          <View
+            style={[
+              styles.inputRow,
+              { backgroundColor: colors.softWhite || '#ffffff' },
+            ]}
+          >
             <Text style={styles.inputLabel}>FROM</Text>
             <TextInput
-              style={[styles.inputText, {color: colors.charcoal}]}
+              style={[styles.inputText, { color: colors.charcoal }]}
               placeholder="Enter start location"
               placeholderTextColor={colors.mutedGray}
               value={fromLocation}
@@ -231,10 +298,15 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
             />
           </View>
 
-          <View style={[styles.inputRow, {backgroundColor: colors.softWhite || '#ffffff'}]}>
+          <View
+            style={[
+              styles.inputRow,
+              { backgroundColor: colors.softWhite || '#ffffff' },
+            ]}
+          >
             <Text style={styles.inputLabel}>TO</Text>
             <TextInput
-              style={[styles.inputText, {color: colors.charcoal}]}
+              style={[styles.inputText, { color: colors.charcoal }]}
               placeholder="Enter destination"
               placeholderTextColor={colors.mutedGray}
               value={toLocation}
@@ -250,64 +322,107 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chipsScrollContent}
-          style={styles.chipsContainer}>
+          style={styles.chipsContainer}
+        >
           <QuickActionButton icon="🏠" label="Home" onPress={handleHomePress} />
           <QuickActionButton icon="💼" label="Work" onPress={handleWorkPress} />
           <QuickActionButton icon="🚨" label="Help" onPress={handleHelpPress} />
-          <QuickActionButton icon="⭐" label="Saved" onPress={handleSavedPress} />
+          <QuickActionButton
+            icon="⭐"
+            label="Saved"
+            onPress={handleSavedPress}
+          />
         </ScrollView>
 
         {/* Route Cards - Show when both fields are filled */}
         {canShowRoutes && (
           <FlatList
             data={routeOptions}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => {
-              const safetyColor = item.safetyScore >= 85 
-                ? colors.safeGreen 
-                : item.safetyScore >= 70 
-                ? colors.amber 
-                : colors.alertRed;
-              
+              const safetyColor =
+                item.safetyScore >= 85
+                  ? colors.safeGreen
+                  : item.safetyScore >= 70
+                  ? colors.amber
+                  : colors.alertRed;
+
               const isSelected = selectedRoute?.id === item.id;
-              
+
               return (
                 <TouchableOpacity
                   key={item.id}
                   onPress={() => setSelectedRoute(item)}
                   style={[
-                    styles.routeCardHorizontal, 
-                    {backgroundColor: colors.lightGray || '#2a2a3e'},
+                    styles.routeCardHorizontal,
+                    { backgroundColor: colors.lightGray || '#2a2a3e' },
                     isSelected && {
                       borderWidth: 2,
                       borderColor: colors.tealGreen,
-                    }
+                    },
                   ]}
-                  activeOpacity={0.9}>
+                  activeOpacity={0.9}
+                >
                   <View style={styles.routeCardHeader}>
-                    <Text style={[styles.routeCardLabel, {color: colors.softWhite}]}>
+                    <Text
+                      style={[
+                        styles.routeCardLabel,
+                        { color: colors.softWhite },
+                      ]}
+                    >
                       {item.label}
                     </Text>
-                    <View style={[styles.safetyBadge, {backgroundColor: safetyColor}]}>
-                      <Text style={[styles.safetyScoreText, {color: colors.softWhite}]}>
+                    <View
+                      style={[
+                        styles.safetyBadge,
+                        { backgroundColor: safetyColor },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.safetyScoreText,
+                          { color: colors.softWhite },
+                        ]}
+                      >
                         {item.safetyScore}
                       </Text>
                     </View>
                   </View>
-                  
+
                   <View style={styles.routeCardInfo}>
-                    <Text style={[styles.routeCardDistance, {color: colors.mutedGray}]}>
+                    <Text
+                      style={[
+                        styles.routeCardDistance,
+                        { color: colors.mutedGray },
+                      ]}
+                    >
                       {item.distance} • {item.time}
                     </Text>
                   </View>
-                  
+
                   <View style={styles.routeCardFooter}>
-                    <Icon 
-                      name={item.lighting ? 'lightbulb-on-outline' : 'lightbulb-off-outline'} 
-                      size={16} 
-                      color={item.lighting ? colors.safeGreen : colors.mutedGray} 
+                    <Icon
+                      name={
+                        item.lighting
+                          ? 'lightbulb-on-outline'
+                          : 'lightbulb-off-outline'
+                      }
+                      size={16}
+                      color={
+                        item.lighting ? colors.safeGreen : colors.mutedGray
+                      }
                     />
-                    <Text style={[styles.lightingText, {color: item.lighting ? colors.safeGreen : colors.mutedGray, marginLeft: 6}]}>
+                    <Text
+                      style={[
+                        styles.lightingText,
+                        {
+                          color: item.lighting
+                            ? colors.safeGreen
+                            : colors.mutedGray,
+                          marginLeft: 6,
+                        },
+                      ]}
+                    >
                       {item.lighting ? 'Well-lit' : 'Low lighting'}
                     </Text>
                   </View>
@@ -331,23 +446,32 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
         )}
 
         {/* Divider */}
-        <View style={[styles.divider, {backgroundColor: colors.mutedGray || '#d0d0d0'}]} />
+        <View
+          style={[
+            styles.divider,
+            { backgroundColor: colors.mutedGray || '#d0d0d0' },
+          ]}
+        />
       </View>
 
       {/* Scrollable Content */}
       <ScrollView
         style={styles.contentContainer}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
-        
+        showsVerticalScrollIndicator={false}
+      >
         {/* Route Suggestions - Removed vertical list, keeping only horizontal cards above */}
-        
+
         {/* Status Row */}
         <View style={styles.statusRow}>
-          <View style={[styles.statusBadge, {backgroundColor: colors.safeGreen}]}>
-            <Text style={[styles.statusText, {color: colors.softWhite}]}>Safe Zone</Text>
+          <View
+            style={[styles.statusBadge, { backgroundColor: colors.safeGreen }]}
+          >
+            <Text style={[styles.statusText, { color: colors.softWhite }]}>
+              Safe Zone
+            </Text>
           </View>
-          <Text style={[styles.contactsText, {color: colors.mutedGray}]}>
+          <Text style={[styles.contactsText, { color: colors.mutedGray }]}>
             3 contacts online
           </Text>
         </View>
@@ -355,31 +479,59 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
         {/* HOME Filter - Show only Home suggestion */}
         {activeFilter === 'home' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: colors.softWhite || colors.charcoal },
+              ]}
+            >
               Home
             </Text>
-            <TripItem title="Home Address" location="Your saved home location" time="Saved" />
+            <TripItem
+              title="Home Address"
+              location="Your saved home location"
+              time="Saved"
+            />
           </View>
         )}
 
         {/* WORK Filter - Show only Work suggestion */}
         {activeFilter === 'work' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: colors.softWhite || colors.charcoal },
+              ]}
+            >
               Work
             </Text>
-            <TripItem title="Workplace" location="Your saved work location" time="Saved" />
+            <TripItem
+              title="Workplace"
+              location="Your saved work location"
+              time="Saved"
+            />
           </View>
         )}
 
         {/* HELP Filter - Show emergency services */}
         {activeFilter === 'help' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: colors.softWhite || colors.charcoal },
+              ]}
+            >
               Emergency Services
             </Text>
             {helpLocations.map(item => (
-              <TripItem key={item.id} title={item.title} location={item.location} time={item.time} />
+              <TripItem
+                key={item.id}
+                title={item.title}
+                location={item.location}
+                time={item.time}
+              />
             ))}
           </View>
         )}
@@ -387,11 +539,21 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
         {/* SAVED Filter - Show saved addresses (excluding Home/Work) */}
         {activeFilter === 'saved' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: colors.softWhite || colors.charcoal },
+              ]}
+            >
               Saved Places
             </Text>
             {savedAddresses.map(item => (
-              <TripItem key={item.id} title={item.title} location={item.location} time={item.time} />
+              <TripItem
+                key={item.id}
+                title={item.title}
+                location={item.location}
+                time={item.time}
+              />
             ))}
           </View>
         )}
@@ -401,41 +563,85 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
           <>
             {/* Recent Trips */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: colors.softWhite || colors.charcoal },
+                ]}
+              >
                 Recent Trips
               </Text>
-              <TripItem title="Evening Commute" location="Downtown → Home" time="2 hours ago" />
-              <TripItem title="Coffee Shop" location="Main St. Cafe" time="5 hours ago" />
-              <TripItem title="Grocery Run" location="SuperMart Plaza" time="Yesterday" />
+              <TripItem
+                title="Evening Commute"
+                location="Downtown → Home"
+                time="2 hours ago"
+              />
+              <TripItem
+                title="Coffee Shop"
+                location="Main St. Cafe"
+                time="5 hours ago"
+              />
+              <TripItem
+                title="Grocery Run"
+                location="SuperMart Plaza"
+                time="Yesterday"
+              />
             </View>
 
             {/* Safe Spots */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: colors.softWhite || colors.charcoal },
+                ]}
+              >
                 Nearby Safe Spots
               </Text>
-              <TripItem title="Police Station" location="Central Ave" time="0.3 km" />
-              <TripItem title="Hospital" location="Healthcare Blvd" time="0.8 km" />
-              <TripItem title="Fire Station" location="Safety St" time="1.2 km" />
+              <TripItem
+                title="Police Station"
+                location="Central Ave"
+                time="0.3 km"
+              />
+              <TripItem
+                title="Hospital"
+                location="Healthcare Blvd"
+                time="0.8 km"
+              />
+              <TripItem
+                title="Fire Station"
+                location="Safety St"
+                time="1.2 km"
+              />
             </View>
           </>
         )}
 
         {/* Report Incident Button */}
         <TouchableOpacity
-          style={[styles.reportButton, {backgroundColor: colors.alertRed}]}
-          activeOpacity={0.8}>
-          <Text style={[styles.reportButtonText, {color: colors.softWhite}]}>
+          style={[styles.reportButton, { backgroundColor: colors.alertRed }]}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.reportButtonText, { color: colors.softWhite }]}>
             🚨 Report Incident
           </Text>
         </TouchableOpacity>
 
         {/* Journey History */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.softWhite || colors.charcoal}]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.softWhite || colors.charcoal },
+            ]}
+          >
             Journey History
           </Text>
-          <TripItem title="Home → Office" location="Jan 8, 2026" time="25 min" />
+          <TripItem
+            title="Home → Office"
+            location="Jan 8, 2026"
+            time="25 min"
+          />
           <TripItem title="Office → Gym" location="Jan 8, 2026" time="15 min" />
           <TripItem title="Gym → Home" location="Jan 7, 2026" time="30 min" />
         </View>
@@ -443,17 +649,26 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
         {/* Additional Options */}
         <View style={styles.section}>
           <TouchableOpacity
-            style={[styles.optionButton, {backgroundColor: colors.tealGreen}]}
-            activeOpacity={0.8}>
-            <Text style={[styles.optionButtonText, {color: colors.softWhite}]}>
+            style={[styles.optionButton, { backgroundColor: colors.tealGreen }]}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[styles.optionButtonText, { color: colors.softWhite }]}
+            >
               📍 Offline Maps
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.optionButton, {backgroundColor: colors.amber, marginTop: 12}]}
-            activeOpacity={0.8}>
-            <Text style={[styles.optionButtonText, {color: colors.softWhite}]}>
+            style={[
+              styles.optionButton,
+              { backgroundColor: colors.amber, marginTop: 12 },
+            ]}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[styles.optionButtonText, { color: colors.softWhite }]}
+            >
               🛡️ Safety Resources
             </Text>
           </TouchableOpacity>
@@ -473,27 +688,51 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
         visible={showLocationModal}
         transparent
         animationType="fade"
-        onRequestClose={handleCloseModal}>
+        onRequestClose={handleCloseModal}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}>
-          <View style={[styles.modalContent, {backgroundColor: colors.deepNavy || colors.softWhite}]}>
+          style={styles.modalOverlay}
+        >
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colors.deepNavy || colors.softWhite },
+            ]}
+          >
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={handleCloseModal}
-              activeOpacity={0.7}>
-              <Text style={[styles.modalCloseText, {color: colors.softWhite || colors.charcoal}]}>
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.modalCloseText,
+                  { color: colors.softWhite || colors.charcoal },
+                ]}
+              >
                 ✕
               </Text>
             </TouchableOpacity>
-            <Text style={[styles.modalTitle, {color: colors.softWhite || colors.charcoal}]}>
+            <Text
+              style={[
+                styles.modalTitle,
+                { color: colors.softWhite || colors.charcoal },
+              ]}
+            >
               Use Live Location
             </Text>
             <TouchableOpacity
-              style={[styles.modalButton, {backgroundColor: colors.safeGreen}]}
+              style={[
+                styles.modalButton,
+                { backgroundColor: colors.safeGreen },
+              ]}
               onPress={handleUseCurrentLocation}
-              activeOpacity={0.8}>
-              <Text style={[styles.modalButtonText, {color: colors.softWhite}]}>
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[styles.modalButtonText, { color: colors.softWhite }]}
+              >
                 Use My Current Location
               </Text>
             </TouchableOpacity>
@@ -507,6 +746,7 @@ const SearchRouteScreen = ({navigation, recentTrips = [], safeSpots = [], journe
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 100,
   },
   header: {
     flexDirection: 'row',
@@ -535,7 +775,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
@@ -554,7 +794,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     gap: 12,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
@@ -616,7 +856,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     minWidth: 85,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
@@ -741,7 +981,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginRight: 12,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
@@ -788,7 +1028,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,

@@ -84,6 +84,14 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        
+        // Fix for Windows MAX_PATH limitation (260 characters)
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_OBJECT_PATH_MAX=500"
+                cppFlags "-std=c++17"
+            }
+        }
     }
     signingConfigs {
         debug {
