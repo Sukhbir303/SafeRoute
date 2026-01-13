@@ -110,9 +110,9 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    
-    // React Native Vector Icons
-    implementation project(':react-native-vector-icons')
+
+    // Google Play Services - Fix for geolocation crash
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
@@ -121,5 +121,8 @@ dependencies {
     }
 }
 
-// Add this at the bottom of the file
+// Vector Icons Configuration
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
+// Google Services plugin for Firebase
 apply plugin: 'com.google.gms.google-services'

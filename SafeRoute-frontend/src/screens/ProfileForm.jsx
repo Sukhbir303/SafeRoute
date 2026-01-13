@@ -10,8 +10,10 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 
 const ProfileForm = ({ navigation }) => {
+  const { completeProfile } = useAuth();
   // State for form fields
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [fullName, setFullName] = useState('');
@@ -71,7 +73,7 @@ const ProfileForm = ({ navigation }) => {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validation logic
     if (!fullName.trim()) {
       Alert.alert('Error', 'Please enter your full name');
@@ -99,13 +101,26 @@ const ProfileForm = ({ navigation }) => {
       return;
     }
 
-    // Form submission logic here
+    // Save profile data to auth context
+    const profileData = {
+      fullName,
+      dateOfBirth,
+      gender,
+      homeAddress,
+      workAddress,
+      sosMethod,
+      emergencyContacts: filledContacts,
+      profilePhoto,
+    };
+
+    await completeProfile(profileData);
+
     Alert.alert('Success', 'Profile saved successfully!', [
       {
         text: 'OK',
         onPress: () => {
-          // Navigate to Home screen
-          navigation.replace('Home');
+          // Navigation will be handled automatically by RootNavigator
+          // based on auth state change
         },
       },
     ]);

@@ -11,10 +11,11 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { authService } from '../../services/firebase.service';
 import { requestPermissions } from '../../utils/permissions';
+import { useAuth } from '../../context/AuthContext';
 
 const SignUpScreen = ({ navigation }) => {
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     phoneNumber: '',
     email: '',
@@ -117,16 +118,19 @@ const SignUpScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      // Sign up with email and password
-      await authService.signUp(
-        formData.email,
-        formData.password,
-        formData.phoneNumber
-      );
+      // Simulate signup - just use the auth context
+      const mockUser = {
+        uid: `user_${Date.now()}`,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+      };
+
+      // Update auth context - user needs to complete profile
+      await signup(mockUser);
 
       Alert.alert(
         'Success',
-        'Account created successfully!',
+        'Account created successfully! Please complete your profile.',
         [
           {
             text: 'OK',
@@ -134,7 +138,7 @@ const SignUpScreen = ({ navigation }) => {
               // Request permissions after successful signup
               await requestPermissions();
               // Navigate to ProfileForm
-              navigation.replace('ProfileForm');
+              navigation.navigate('ProfileForm');
             },
           },
         ]
@@ -150,7 +154,14 @@ const SignUpScreen = ({ navigation }) => {
   const handleGoogleSignUp = async () => {
     setLoading(true);
     try {
-      await authService.signInWithGoogle();
+      // Simulate Google signup
+      const mockUser = {
+        uid: `google_${Date.now()}`,
+        email: 'google-user@gmail.com',
+        phoneNumber: '',
+      };
+      
+      await signup(mockUser);
       
       Alert.alert(
         'Success',

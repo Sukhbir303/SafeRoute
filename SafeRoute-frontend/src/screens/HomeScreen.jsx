@@ -103,20 +103,40 @@ const HomeScreen = () => {
   };
 
   const getCurrentLocation = () => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const {latitude, longitude} = position.coords;
-        setUserLocation({latitude, longitude});
-        setMapRegion({
-          latitude,
-          longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      },
-      error => console.log('Error getting location:', error),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
-    );
+    try {
+      Geolocation.getCurrentPosition(
+        position => {
+          const {latitude, longitude} = position.coords;
+          setUserLocation({latitude, longitude});
+          setMapRegion({
+            latitude,
+            longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+        },
+        error => {
+          console.log('Error getting location:', error);
+          // Use default Mumbai location if geolocation fails
+          setMapRegion({
+            latitude: 19.076,
+            longitude: 72.8777,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+        },
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      );
+    } catch (error) {
+      console.log('Geolocation error:', error);
+      // Use default Mumbai location if geolocation fails
+      setMapRegion({
+        latitude: 19.076,
+        longitude: 72.8777,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    }
   };
 
   const toggleDrawer = () => {

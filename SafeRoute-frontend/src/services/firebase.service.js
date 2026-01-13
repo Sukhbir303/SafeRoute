@@ -1,51 +1,49 @@
-import auth from '@react-native-firebase/auth';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import firestore from '@react-native-firebase/firestore';
-
 /**
- * Firebase Authentication Service
- * Handles all authentication operations for the app
+ * Mock Firebase Authentication Service
+ * Simulates authentication operations for the app
+ * TODO: Replace with actual Firebase when google-services.json is configured
  */
+
+// Mock user database
+const mockUsers = new Map();
 
 class AuthService {
   constructor() {
-    // Configure Google Sign In
-    this.configureGoogleSignIn();
+    // Mock initialization
+    console.log('Mock Auth Service initialized');
   }
 
   /**
-   * Configure Google Sign In
+   * Configure Google Sign In (Mock)
    */
   configureGoogleSignIn() {
-    try {
-      GoogleSignin.configure({
-        webClientId: '534086943156-s4eiecq4ittu8fqhvf3588buima4aekd.apps.googleusercontent.com', // From Firebase Console
-        offlineAccess: true,
-      });
-    } catch (error) {
-      console.error('Error configuring Google Sign In:', error);
-    }
+    console.log('Mock Google Sign In configured');
   }
 
   /**
-   * Sign up with email and password
+   * Sign up with email and password (Mock)
    */
   async signUp(email, password, phoneNumber) {
     try {
-      // Create user with email and password
-      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Store additional user data in Firestore
-      await firestore().collection('users').doc(user.uid).set({
+      // Check if user already exists
+      if (mockUsers.has(email)) {
+        throw new Error('The email address is already in use by another account.');
+      }
+
+      // Create mock user
+      const user = {
+        uid: `mock_${Date.now()}`,
         email: email,
         phoneNumber: phoneNumber,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        updatedAt: firestore.FieldValue.serverTimestamp(),
-      });
+        emailVerified: false,
+        createdAt: new Date().toISOString(),
+      };
 
-      // Send email verification
-      await user.sendEmailVerification();
+      mockUsers.set(email, { ...user, password });
+      console.log('Mock user created:', email);
 
       return user;
     } catch (error) {
@@ -54,49 +52,27 @@ class AuthService {
   }
 
   /**
-   * Sign in with email and password
+   * Sign in with email and password (Mock)
    */
   async signIn(email, password) {
     try {
-      const userCredential = await auth().signInWithEmailAndPassword(email, password);
-      return userCredential.user;
-    } catch (error) {
-      throw this.handleAuthError(error);
-    }
-  }
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-  /**
-   * Sign in with Google
-   */
-  async signInWithGoogle() {
-    try {
-      // Check if device supports Google Play
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-
-      // Get user's ID token
-      const { idToken } = await GoogleSignin.signIn();
-
-      // Create a Google credential with the token
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      // Sign in with the credential
-      const userCredential = await auth().signInWithCredential(googleCredential);
-      const user = userCredential.user;
-
-      // Check if this is a new user and create Firestore record
-      const userDoc = await firestore().collection('users').doc(user.uid).get();
+      const userData = mockUsers.get(email);
       
-      if (!userDoc.exists) {
-        await firestore().collection('users').doc(user.uid).set({
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          phoneNumber: user.phoneNumber || '',
-          createdAt: firestore.FieldValue.serverTimestamp(),
-          updatedAt: firestore.FieldValue.serverTimestamp(),
-        });
+      if (!userData || userData.password !== password) {
+        throw new Error('The password is invalid or the user does not have a password.');
       }
 
+      const user = {
+        uid: userData.uid,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+        emailVerified: userData.emailVerified,
+      };
+
+      console.log('Mock user signed in:', email);
       return user;
     } catch (error) {
       throw this.handleAuthError(error);
@@ -104,116 +80,127 @@ class AuthService {
   }
 
   /**
-   * Sign out
+   * Sign in with Google (Mock)
+   */
+  async signInWithGoogle() {
+    try {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const user = {
+        uid: `google_mock_${Date.now()}`,
+        email: 'mockuser@gmail.com',
+        displayName: 'Mock User',
+        photoURL: null,
+        phoneNumber: '',
+        emailVerified: true,
+      };
+
+      console.log('Mock Google sign in successful');
+      return user;
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
+  }
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
+  }
+
+  /**
+   * Sign out (Mock)
    */
   async signOut() {
     try {
-      // Sign out from Google if signed in
-      const isSignedIn = await GoogleSignin.isSignedIn();
-      if (isSignedIn) {
-        await GoogleSignin.signOut();
-      }
-
-      // Sign out from Firebase
-      await auth().signOut();
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Mock user signed out');
     } catch (error) {
       throw this.handleAuthError(error);
     }
   }
 
   /**
-   * Reset password
+   * Reset password (Mock)
    */
   async resetPassword(email) {
     try {
-      await auth().sendPasswordResetEmail(email);
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Mock password reset email sent to:', email);
     } catch (error) {
       throw this.handleAuthError(error);
     }
   }
 
   /**
-   * Get current user
+   * Get current user (Mock)
    */
   getCurrentUser() {
-    return auth().currentUser;
+    return null; // No persistent session in mock
   }
 
   /**
-   * Check if user is signed in
+   * Check if user is signed in (Mock)
    */
   isSignedIn() {
-    return auth().currentUser !== null;
+    return false; // No persistent session in mock
+  }
   }
 
   /**
-   * Update user profile
+   * Update user profile (Mock)
    */
   async updateProfile(displayName, photoURL) {
     try {
-      const user = auth().currentUser;
-      if (!user) {
-        throw new Error('No user is currently signed in');
-      }
-
-      await user.updateProfile({
-        displayName: displayName,
-        photoURL: photoURL,
-      });
-
-      // Update Firestore
-      await firestore().collection('users').doc(user.uid).update({
-        displayName: displayName,
-        photoURL: photoURL,
-        updatedAt: firestore.FieldValue.serverTimestamp(),
-      });
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Mock profile updated:', displayName);
     } catch (error) {
       throw this.handleAuthError(error);
     }
   }
 
   /**
-   * Update user phone number
+   * Update user phone number (Mock)
    */
   async updatePhoneNumber(phoneNumber) {
     try {
-      const user = auth().currentUser;
-      if (!user) {
-        throw new Error('No user is currently signed in');
-      }
-
-      // Update Firestore
-      await firestore().collection('users').doc(user.uid).update({
-        phoneNumber: phoneNumber,
-        updatedAt: firestore.FieldValue.serverTimestamp(),
-      });
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Mock phone number updated:', phoneNumber);
     } catch (error) {
       throw this.handleAuthError(error);
     }
   }
 
   /**
-   * Get user data from Firestore
+   * Get user data from Firestore (Mock)
    */
   async getUserData(userId) {
     try {
-      const userDoc = await firestore().collection('users').doc(userId).get();
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      if (userDoc.exists) {
-        return userDoc.data();
-      } else {
-        throw new Error('User data not found');
-      }
+      // Return mock user data
+      return {
+        email: 'mockuser@example.com',
+        displayName: 'Mock User',
+        phoneNumber: '+1234567890',
+        photoURL: null,
+      };
     } catch (error) {
       throw this.handleAuthError(error);
     }
   }
 
   /**
-   * Listen to auth state changes
+   * Listen to auth state changes (Mock)
    */
   onAuthStateChanged(callback) {
-    return auth().onAuthStateChanged(callback);
+    // Mock implementation - call callback with null initially
+    setTimeout(() => callback(null), 0);
+    return () => {}; // Return unsubscribe function
   }
 
   /**
@@ -222,43 +209,12 @@ class AuthService {
   handleAuthError(error) {
     console.error('Auth Error:', error);
 
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        return new Error('This email is already registered. Please sign in instead.');
-      
-      case 'auth/invalid-email':
-        return new Error('Invalid email address.');
-      
-      case 'auth/operation-not-allowed':
-        return new Error('Email/password accounts are not enabled.');
-      
-      case 'auth/weak-password':
-        return new Error('Password is too weak. Please use a stronger password.');
-      
-      case 'auth/user-disabled':
-        return new Error('This account has been disabled.');
-      
-      case 'auth/user-not-found':
-        return new Error('No account found with this email.');
-      
-      case 'auth/wrong-password':
-        return new Error('Incorrect password.');
-      
-      case 'auth/invalid-credential':
-        return new Error('Invalid credentials. Please check your email and password.');
-      
-      case 'auth/account-exists-with-different-credential':
-        return new Error('An account already exists with the same email but different sign-in credentials.');
-      
-      case 'auth/network-request-failed':
-        return new Error('Network error. Please check your internet connection.');
-      
-      case 'auth/too-many-requests':
-        return new Error('Too many unsuccessful attempts. Please try again later.');
-      
-      default:
-        return new Error(error.message || 'An error occurred during authentication.');
+    // Handle error codes or return the original error
+    if (error.message) {
+      return error;
     }
+    
+    return new Error(error.message || 'An error occurred during authentication.');
   }
 }
 

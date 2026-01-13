@@ -9,6 +9,7 @@ import {
   StatusBar,
   TouchableOpacity,
 } from "react-native";
+import { useAuth } from "../context/AuthContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,12 +58,18 @@ const slides = [
 
 export default function CarouselScreen({ navigation }) {
   const [index, setIndex] = useState(0);
+  const { markCarouselSeen } = useAuth();
 
   const onViewRef = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
       setIndex(viewableItems[0].index);
     }
   });
+
+  const handleContinue = () => {
+    markCarouselSeen();
+    navigation.navigate('Signup');
+  };
 
   return (
     <View style={styles.container}>
@@ -101,11 +108,7 @@ export default function CarouselScreen({ navigation }) {
         <TouchableOpacity
           style={styles.continueButton}
           activeOpacity={0.85}
-          onPress={() => {
-            // Example navigation
-            // navigation.replace("Login");
-            console.log("Continue pressed");
-          }}
+          onPress={handleContinue}
         >
           <Text style={styles.continueText}>Continue</Text>
         </TouchableOpacity>

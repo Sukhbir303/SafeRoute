@@ -3,34 +3,21 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import React from 'react';
+import {StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {ThemeProvider, useTheme} from './src/context/ThemeContext';
+import {ThemeProvider} from './src/context/ThemeContext';
+import {AuthProvider} from './src/context/AuthContext';
 import AppNavigator from './src/navigation/AppNavigator';
-import CarouselScreen from './src/screens/CarouselScreen';
-
-function AppContent() {
-  const {theme} = useTheme();
-  const [showCarousel, setShowCarousel] = useState(true);
-
-  if (showCarousel) {
-    return <CarouselScreen onFinish={() => setShowCarousel(false)} />;
-  }
-
-  return (
-    <>
-      <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
-      <AppNavigator />
-    </>
-  );
-}
 
 function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AppContent />
+        <AuthProvider>
+          <StatusBar barStyle="dark-content" />
+          <AppNavigator />
+        </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

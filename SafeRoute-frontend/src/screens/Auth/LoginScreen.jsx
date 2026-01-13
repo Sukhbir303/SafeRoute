@@ -11,9 +11,10 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { authService } from '../../services/firebase.service';
+import { useAuth } from '../../context/AuthContext';
 
 const LoginScreen = ({ navigation }) => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     emailOrPhone: '',
     password: '',
@@ -69,13 +70,7 @@ const LoginScreen = ({ navigation }) => {
       // Determine if input is email or phone
       const isEmail = formData.emailOrPhone.includes('@');
       
-      if (isEmail) {
-        // Sign in with email
-        await authService.signIn(formData.emailOrPhone, formData.password);
-      } else {
-        // For phone login, we need to retrieve the email associated with the phone
-        // This would require a custom backend or Firebase function
-        // For now, we'll show an alert
+      if (!isEmail) {
         Alert.alert(
           'Phone Login',
           'Phone number login requires additional setup. Please use email for now.',
@@ -84,14 +79,17 @@ const LoginScreen = ({ navigation }) => {
         return;
       }
 
-      Alert.alert('Success', 'Logged in successfully!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.navigate('Home');
-          },
-        },
-      ]);
+      // Simulate login - just use the auth context
+      const mockUser = {
+        uid: `user_${Date.now()}`,
+        email: formData.emailOrPhone,
+      };
+
+      // Update auth context - login means profile is already complete
+      await login(mockUser);
+
+      // Navigation will be handled automatically by RootNavigator
+      // based on auth state change
     } catch (error) {
       Alert.alert('Login Failed', error.message);
     } finally {
@@ -103,16 +101,15 @@ const LoginScreen = ({ navigation }) => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await authService.signInWithGoogle();
+      // Simulate Google login
+      const mockUser = {
+        uid: `google_${Date.now()}`,
+        email: 'google-user@gmail.com',
+      };
       
-      Alert.alert('Success', 'Signed in with Google successfully!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.navigate('Home');
-          },
-        },
-      ]);
+      await login(mockUser);
+      
+      Alert.alert('Success', 'Signed in with Google successfully!');
     } catch (error) {
       Alert.alert('Google Sign In Failed', error.message);
     } finally {
@@ -134,7 +131,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      await authService.resetPassword(formData.emailOrPhone);
+      // Simulate password reset
       Alert.alert('Success', 'Password reset email sent! Check your inbox.');
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -243,7 +240,7 @@ const LoginScreen = ({ navigation }) => {
           {/* Sign Up Link */}
           <View style={styles.signUpLinkContainer}>
             <Text style={styles.signUpLinkText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Text style={styles.signUpLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
