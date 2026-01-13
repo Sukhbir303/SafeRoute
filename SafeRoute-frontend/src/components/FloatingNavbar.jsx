@@ -1,53 +1,73 @@
-import React, {useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert, Platform, Animated} from 'react-native';
-import {useNavigation, useNavigationState} from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Animated,
+} from 'react-native';
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {BlurView} from '@react-native-community/blur';
-import {useTheme} from '../context/ThemeContext';
+import { BlurView } from '@react-native-community/blur';
+import { useTheme } from '../context/ThemeContext';
+import { useSelectedRoute } from '../context/RouteContext';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const FloatingNavbar = ({selectedRoute = null, onStartNavigationPress = null, onCancelRoute = null}) => {
+const FloatingNavbar = () => {
   const navigation = useNavigation();
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const animValue = useRef(new Animated.Value(0)).current;
-  
+
+  // Get selected route from context
+  let selectedRoute = null;
+  let setSelectedRoute = () => {};
+
+  try {
+    const context = useSelectedRoute();
+    selectedRoute = context.selectedRoute;
+    setSelectedRoute = context.setSelectedRoute;
+  } catch (error) {
+    console.log('RouteContext not available');
+  }
+
   // Animate when selectedRoute changes
   useEffect(() => {
     Animated.timing(animValue, {
       toValue: selectedRoute ? 1 : 0,
       duration: 250,
-      useNativeDriver: false, // height animations require layout
+      useNativeDriver: false,
     }).start();
   }, [selectedRoute]);
-  
+
   // Interpolate values
   const navbarHeight = animValue.interpolate({
     inputRange: [0, 1],
     outputRange: [60, 75],
   });
-  
+
   const opacityTabs = animValue.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 0],
   });
-  
+
   const opacityButton = animValue;
-  
+
   const translateYTabs = animValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 10],
   });
-  
+
   const translateYButton = animValue.interpolate({
     inputRange: [0, 1],
     outputRange: [10, 0],
   });
-  
+
   // Get current route with safe fallback
   let currentRoute = 'HomeScreen';
   try {
-    const state = useNavigationState((state) => state);
+    const state = useNavigationState(state => state);
     currentRoute = state?.routes?.[state?.index]?.name || 'HomeScreen';
   } catch (error) {
     console.log('Navigation state not available yet');
@@ -65,15 +85,34 @@ const FloatingNavbar = ({selectedRoute = null, onStartNavigationPress = null, on
   const activeColor = colors.tealGreen;
   const inactiveColor = colors.softWhite;
 
+  const handleHomePress = () => {
+    if (!isHome) {
+      navigation.navigate('HomeScreen');
+    }
+  };
+
   const handleNavigatePress = () => {
-    navigation.navigate('SearchRouteScreen');
+    if (!isNavigate) {
+      navigation.navigate('SearchRouteScreen');
+    }
   };
 
   const handleCirclePress = () => {
-    navigation.navigate('CircleScreen');
+    if (!isCircle) {
+      navigation.navigate('CircleScreen');
+    }
   };
 
-  const NavButton = ({iconName, label, isActive, onPress}) => {
+  const handleStartNavigation = () => {
+    console.log('Start navigation with route:', selectedRoute);
+    // Add your start navigation logic here
+  };
+
+  const handleCancelRoute = () => {
+    setSelectedRoute(null);
+  };
+
+  const NavButton = ({ iconName, label, isActive, onPress }) => {
     const iconColor = isActive ? activeColor : inactiveColor;
     const opacity = isActive ? 1 : 0.7;
 
@@ -81,18 +120,10 @@ const FloatingNavbar = ({selectedRoute = null, onStartNavigationPress = null, on
       <TouchableOpacity
         style={styles.navButton}
         onPress={onPress}
-        activeOpacity={0.7}>
-        <Icon 
-          name={iconName} 
-          size={26} 
-          color={iconColor}
-          style={{opacity}}
-        />
-        <Text 
-          style={[
-            styles.navLabel, 
-            {color: iconColor, opacity}
-          ]}>
+        activeOpacity={0.7}
+      >
+        <Icon name={iconName} size={26} color={iconColor} style={{ opacity }} />
+        <Text style={[styles.navLabel, { color: iconColor, opacity }]}>
           {label}
         </Text>
       </TouchableOpacity>
@@ -107,29 +138,33 @@ const FloatingNavbar = ({selectedRoute = null, onStartNavigationPress = null, on
         style={styles.blurContainer}
         blurType="dark"
         blurAmount={blurIntensity}
-        reducedTransparencyFallbackColor={colors.deepNavy || '#1a1a2e'}>
-        <Animated.View style={[
-          styles.contentContainer, 
-          {
-            backgroundColor: `${colors.deepNavy || '#1a1a2e'}CC`,
-            height: navbarHeight,
-          }
-        ]}>
-          {/* Tab mode - fades out */}
-          <Animated.View 
+        reducedTransparencyFallbackColor={colors.deepNavy || '#1a1a2e'}
+      >
+        <Animated.View
+          style={[
+            styles.contentContainer,
+            {
+              backgroundColor: `${colors.deepNavy || '#1a1a2e'}CC`,
+              height: navbarHeight,
+            },
+          ]}
+        >
+          {/* Tab mode - fades out when route is selected */}
+          <Animated.View
             style={[
               styles.tabsContainer,
               {
                 opacity: opacityTabs,
-                transform: [{translateY: translateYTabs}],
-              }
+                transform: [{ translateY: translateYTabs }],
+              },
             ]}
-            pointerEvents={selectedRoute ? 'none' : 'auto'}>
+            pointerEvents={selectedRoute ? 'none' : 'auto'}
+          >
             <NavButton
               iconName="home"
               label="Home"
               isActive={isHome}
-              onPress={() => navigation.navigate('HomeScreen')}
+              onPress={handleHomePress}
             />
             <NavButton
               iconName="navigate"
@@ -144,29 +179,42 @@ const FloatingNavbar = ({selectedRoute = null, onStartNavigationPress = null, on
               onPress={handleCirclePress}
             />
           </Animated.View>
-          
-          {/* CTA mode - fades in */}
-          <Animated.View 
+
+          {/* CTA mode - fades in when route is selected */}
+          <Animated.View
             style={[
               styles.startNavigationContainer,
               {
                 opacity: opacityButton,
-                transform: [{translateY: translateYButton}],
-              }
+                transform: [{ translateY: translateYButton }],
+              },
             ]}
-            pointerEvents={selectedRoute ? 'auto' : 'none'}>
+            pointerEvents={selectedRoute ? 'auto' : 'none'}
+          >
             <TouchableOpacity
               style={styles.cancelButton}
-              onPress={onCancelRoute}
-              activeOpacity={0.7}>
+              onPress={handleCancelRoute}
+              activeOpacity={0.7}
+            >
               <Icon name="close" size={24} color={colors.softWhite} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.fullWidthStartButton, {backgroundColor: colors.tealGreen}]}
-              onPress={onStartNavigationPress}
-              activeOpacity={0.8}>
-              <Icon name="navigate" size={24} color={colors.softWhite} style={{marginRight: 8}} />
-              <Text style={[styles.fullWidthStartText, {color: colors.softWhite}]}>
+              style={[
+                styles.fullWidthStartButton,
+                { backgroundColor: colors.tealGreen },
+              ]}
+              onPress={handleStartNavigation}
+              activeOpacity={0.8}
+            >
+              <Icon
+                name="navigate"
+                size={24}
+                color={colors.softWhite}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={[styles.fullWidthStartText, { color: colors.softWhite }]}
+              >
                 Start Navigation
               </Text>
             </TouchableOpacity>

@@ -1,4 +1,4 @@
-﻿import React, {useState, useRef, useEffect} from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,22 +9,43 @@ import {
   Animated,
   RefreshControl,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useTheme} from '../context/ThemeContext';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {SwipeListView} from 'react-native-swipe-list-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../context/ThemeContext';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Tab = createMaterialTopTabNavigator();
 
 // Emergency Contacts Tab Component
 const EmergencyContactsTab = () => {
-  const {colors} = useTheme();
-  
+  const { colors } = useTheme();
+
   const [contacts, setContacts] = useState([
-    {id: '1', name: 'Mom', relation: 'Mother', image: null, online: true, primary: true},
-    {id: '2', name: 'Aarav', relation: 'Brother', image: null, online: false, primary: false},
-    {id: '3', name: 'Neha', relation: 'Friend', image: null, online: true, primary: false},
+    {
+      id: '1',
+      name: 'Mom',
+      relation: 'Mother',
+      image: null,
+      online: true,
+      primary: true,
+    },
+    {
+      id: '2',
+      name: 'Aarav',
+      relation: 'Brother',
+      image: null,
+      online: false,
+      primary: false,
+    },
+    {
+      id: '3',
+      name: 'Neha',
+      relation: 'Friend',
+      image: null,
+      online: true,
+      primary: false,
+    },
   ]);
   const [refreshing, setRefreshing] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -47,26 +68,26 @@ const EmergencyContactsTab = () => {
 
   const onlineCount = contacts.filter(c => c.online).length;
 
-  const handleCall = (contact) => {
+  const handleCall = contact => {
     Alert.alert('Call', `Calling ${contact.name}...`);
   };
 
-  const handleRemove = (contact) => {
+  const handleRemove = contact => {
     Alert.alert(
       'Remove Contact',
       `Remove ${contact.name} from emergency contacts?`,
       [
-        {text: 'Cancel', style: 'cancel'},
+        { text: 'Cancel', style: 'cancel' },
         {
           text: 'Remove',
           style: 'destructive',
-          onPress: () => setContacts(contacts.filter(c => c.id !== contact.id))
-        }
-      ]
+          onPress: () => setContacts(contacts.filter(c => c.id !== contact.id)),
+        },
+      ],
     );
   };
 
-  const handleContactPress = (contact) => {
+  const handleContactPress = contact => {
     Alert.alert('Edit Contact', 'Edit contact screen coming soon!');
   };
 
@@ -74,49 +95,67 @@ const EmergencyContactsTab = () => {
     Alert.alert('Add Contact', 'Add contact screen coming soon!');
   };
 
-  const renderContact = ({item, index}) => (
-    <Animated.View style={{opacity: fadeAnim}}>
+  const renderContact = ({ item, index }) => (
+    <Animated.View style={{ opacity: fadeAnim }}>
       <TouchableOpacity
-        style={[styles.contactRow, {backgroundColor: colors.deepNavy}]}
+        style={[styles.contactRow, { backgroundColor: colors.deepNavy }]}
         onPress={() => handleContactPress(item)}
-        activeOpacity={0.7}>
-        <View style={[styles.avatar, {backgroundColor: colors.tealGreen}]}>
-          <Text style={[styles.avatarText, {color: colors.softWhite}]}>
+        activeOpacity={0.7}
+      >
+        <View style={[styles.avatar, { backgroundColor: colors.tealGreen }]}>
+          <Text style={[styles.avatarText, { color: colors.softWhite }]}>
             {item.name.charAt(0).toUpperCase()}
           </Text>
         </View>
         <View style={styles.contactInfo}>
           <View style={styles.nameRow}>
-            <Text style={[styles.contactName, {color: colors.softWhite}]}>
+            <Text style={[styles.contactName, { color: colors.softWhite }]}>
               {item.name}
             </Text>
             {item.primary && (
-              <Icon name="star" size={16} color={colors.amber} style={{marginLeft: 6}} />
+              <Icon
+                name="star"
+                size={16}
+                color={colors.amber}
+                style={{ marginLeft: 6 }}
+              />
             )}
           </View>
-          <Text style={[styles.contactRelation, {color: colors.mutedGray}]}>
+          <Text style={[styles.contactRelation, { color: colors.mutedGray }]}>
             {item.relation}
           </Text>
         </View>
-        <View style={[styles.onlineDot, {backgroundColor: item.online ? colors.safeGreen : colors.alertRed}]} />
+        <View
+          style={[
+            styles.onlineDot,
+            {
+              backgroundColor: item.online ? colors.safeGreen : colors.alertRed,
+            },
+          ]}
+        />
       </TouchableOpacity>
     </Animated.View>
   );
 
-  const renderHiddenItem = ({item}) => (
+  const renderHiddenItem = ({ item }) => (
     <View style={styles.hiddenRow}>
       <TouchableOpacity
-        style={[styles.hiddenButton, styles.callButton, {backgroundColor: colors.tealGreen}]}
-        onPress={() => handleCall(item)}>
+        style={[
+          styles.hiddenButton,
+          styles.callButton,
+          { backgroundColor: colors.tealGreen },
+        ]}
+        onPress={() => handleCall(item)}
+      >
         <Icon name="call" size={24} color={colors.softWhite} />
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={[styles.tabContainer, {backgroundColor: colors.primary}]}>
+    <View style={[styles.tabContainer, { backgroundColor: colors.primary }]}>
       <View style={styles.headerInfo}>
-        <Text style={[styles.onlineText, {color: colors.mutedGray}]}>
+        <Text style={[styles.onlineText, { color: colors.mutedGray }]}>
           {onlineCount} {onlineCount === 1 ? 'contact' : 'contacts'} online
         </Text>
       </View>
@@ -127,7 +166,7 @@ const EmergencyContactsTab = () => {
         renderHiddenItem={renderHiddenItem}
         rightOpenValue={-70}
         disableRightSwipe
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.listContent}
         refreshControl={
           <RefreshControl
@@ -140,9 +179,10 @@ const EmergencyContactsTab = () => {
       />
 
       <TouchableOpacity
-        style={[styles.fab, {backgroundColor: colors.tealGreen}]}
+        style={[styles.fab, { backgroundColor: colors.tealGreen }]}
         onPress={handleAddContact}
-        activeOpacity={0.8}>
+        activeOpacity={0.8}
+      >
         <Icon name="add" size={28} color={colors.softWhite} />
       </TouchableOpacity>
     </View>
@@ -151,11 +191,23 @@ const EmergencyContactsTab = () => {
 
 // I'm Tracking Tab Component
 const ImTrackingTab = () => {
-  const {colors} = useTheme();
-  
+  const { colors } = useTheme();
+
   const [tracking, setTracking] = useState([
-    {id: '1', name: 'Riya', status: 'safe', lastSeen: '3 mins ago', sharingLocation: true},
-    {id: '2', name: 'Karan', status: 'warning', lastSeen: '7 mins ago', sharingLocation: false},
+    {
+      id: '1',
+      name: 'Riya',
+      status: 'safe',
+      lastSeen: '3 mins ago',
+      sharingLocation: true,
+    },
+    {
+      id: '2',
+      name: 'Karan',
+      status: 'warning',
+      lastSeen: '7 mins ago',
+      sharingLocation: false,
+    },
   ]);
   const [refreshing, setRefreshing] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -176,7 +228,7 @@ const ImTrackingTab = () => {
     }, 1500);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'safe':
         return colors.safeGreen;
@@ -189,7 +241,7 @@ const ImTrackingTab = () => {
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = status => {
     switch (status) {
       case 'safe':
         return 'Safe';
@@ -202,52 +254,59 @@ const ImTrackingTab = () => {
     }
   };
 
-  const handleTrackingPress = (item) => {
+  const handleTrackingPress = item => {
     Alert.alert('Live Map', `Opening live map preview for ${item.name}...`);
   };
 
-  const handleRemoveTracking = (item) => {
-    Alert.alert(
-      'Stop Tracking',
-      `Stop tracking ${item.name}?`,
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {
-          text: 'Stop',
-          style: 'destructive',
-          onPress: () => setTracking(tracking.filter(t => t.id !== item.id))
-        }
-      ]
-    );
+  const handleRemoveTracking = item => {
+    Alert.alert('Stop Tracking', `Stop tracking ${item.name}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Stop',
+        style: 'destructive',
+        onPress: () => setTracking(tracking.filter(t => t.id !== item.id)),
+      },
+    ]);
   };
 
-  const renderTrackingItem = ({item, index}) => (
-    <Animated.View style={{opacity: fadeAnim}}>
+  const renderTrackingItem = ({ item, index }) => (
+    <Animated.View style={{ opacity: fadeAnim }}>
       <TouchableOpacity
-        style={[styles.trackingItem, {backgroundColor: colors.deepNavy}]}
+        style={[styles.trackingItem, { backgroundColor: colors.deepNavy }]}
         onPress={() => handleTrackingPress(item)}
-        activeOpacity={0.7}>
-        <View style={[styles.avatar, {backgroundColor: colors.tealGreen}]}>
-          <Text style={[styles.avatarText, {color: colors.softWhite}]}>
+        activeOpacity={0.7}
+      >
+        <View style={[styles.avatar, { backgroundColor: colors.tealGreen }]}>
+          <Text style={[styles.avatarText, { color: colors.softWhite }]}>
             {item.name.charAt(0).toUpperCase()}
           </Text>
         </View>
         <View style={styles.trackingContent}>
           <View style={styles.trackingHeader}>
-            <Text style={[styles.trackingName, {color: colors.softWhite}]}>
+            <Text style={[styles.trackingName, { color: colors.softWhite }]}>
               {item.name}
             </Text>
             {item.sharingLocation && (
-              <Icon name="location" size={16} color={colors.tealGreen} style={{marginLeft: 6}} />
+              <Icon
+                name="location"
+                size={16}
+                color={colors.tealGreen}
+                style={{ marginLeft: 6 }}
+              />
             )}
           </View>
           <View style={styles.trackingMeta}>
-            <View style={[styles.statusChip, {backgroundColor: getStatusColor(item.status)}]}>
-              <Text style={[styles.statusText, {color: colors.softWhite}]}>
+            <View
+              style={[
+                styles.statusChip,
+                { backgroundColor: getStatusColor(item.status) },
+              ]}
+            >
+              <Text style={[styles.statusText, { color: colors.softWhite }]}>
                 {getStatusText(item.status)}
               </Text>
             </View>
-            <Text style={[styles.lastSeenText, {color: colors.mutedGray}]}>
+            <Text style={[styles.lastSeenText, { color: colors.mutedGray }]}>
               • {item.lastSeen}
             </Text>
           </View>
@@ -257,11 +316,12 @@ const ImTrackingTab = () => {
     </Animated.View>
   );
 
-  const renderHiddenTrackingItem = ({item}) => (
+  const renderHiddenTrackingItem = ({ item }) => (
     <View style={styles.hiddenRow}>
       <TouchableOpacity
-        style={[styles.hiddenButton, {backgroundColor: colors.alertRed}]}
-        onPress={() => handleRemoveTracking(item)}>
+        style={[styles.hiddenButton, { backgroundColor: colors.alertRed }]}
+        onPress={() => handleRemoveTracking(item)}
+      >
         <Icon name="close-circle" size={22} color={colors.softWhite} />
       </TouchableOpacity>
     </View>
@@ -269,9 +329,11 @@ const ImTrackingTab = () => {
 
   if (tracking.length === 0) {
     return (
-      <View style={[styles.emptyContainer, {backgroundColor: colors.primary}]}>
+      <View
+        style={[styles.emptyContainer, { backgroundColor: colors.primary }]}
+      >
         <Icon name="people-outline" size={64} color={colors.mutedGray} />
-        <Text style={[styles.emptyText, {color: colors.mutedGray}]}>
+        <Text style={[styles.emptyText, { color: colors.mutedGray }]}>
           You're not tracking anyone right now
         </Text>
       </View>
@@ -279,14 +341,14 @@ const ImTrackingTab = () => {
   }
 
   return (
-    <View style={[styles.tabContainer, {backgroundColor: colors.primary}]}>
+    <View style={[styles.tabContainer, { backgroundColor: colors.primary }]}>
       <SwipeListView
         data={tracking}
         renderItem={renderTrackingItem}
         renderHiddenItem={renderHiddenTrackingItem}
         rightOpenValue={-68}
         disableRightSwipe
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.trackingList}
         refreshControl={
           <RefreshControl
@@ -303,11 +365,11 @@ const ImTrackingTab = () => {
 
 // Volunteers Tab Component
 const VolunteersTab = () => {
-  const {colors} = useTheme();
-  
+  const { colors } = useTheme();
+
   const [volunteers] = useState([
-    {id: '1', name: 'Volunteer A', dist: '400m', rating: 4.8},
-    {id: '2', name: 'Volunteer B', dist: '1.2km', rating: 4.5},
+    { id: '1', name: 'Volunteer A', dist: '400m', rating: 4.8 },
+    { id: '2', name: 'Volunteer B', dist: '1.2km', rating: 4.5 },
   ]);
   const [trackMeEnabled, setTrackMeEnabled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -333,60 +395,67 @@ const VolunteersTab = () => {
     setTrackMeEnabled(!trackMeEnabled);
     Alert.alert(
       trackMeEnabled ? 'Tracking Disabled' : 'Tracking Enabled',
-      trackMeEnabled 
+      trackMeEnabled
         ? 'Volunteers can no longer track your location'
-        : 'Volunteers can now track your location for safety'
+        : 'Volunteers can now track your location for safety',
     );
   };
 
-  const handleAlertVolunteer = (volunteer) => {
+  const handleAlertVolunteer = volunteer => {
     Alert.alert('Success', 'Volunteer has been notified');
   };
 
-  const renderStars = (rating) => {
+  const renderStars = rating => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
     const stars = [];
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<Icon key={`full-${i}`} name="star" size={14} color={colors.amber} />);
+      stars.push(
+        <Icon key={`full-${i}`} name="star" size={14} color={colors.amber} />,
+      );
     }
     if (hasHalfStar) {
-      stars.push(<Icon key="half" name="star-half" size={14} color={colors.amber} />);
+      stars.push(
+        <Icon key="half" name="star-half" size={14} color={colors.amber} />,
+      );
     }
     return stars;
   };
 
-  const renderVolunteer = ({item, index}) => (
-    <Animated.View style={{opacity: fadeAnim}}>
-      <View style={[styles.volunteerCard, {backgroundColor: colors.deepNavy}]}>
+  const renderVolunteer = ({ item, index }) => (
+    <Animated.View style={{ opacity: fadeAnim }}>
+      <View
+        style={[styles.volunteerCard, { backgroundColor: colors.deepNavy }]}
+      >
         <View style={styles.volunteerRow}>
-          <View style={[styles.avatar, {backgroundColor: colors.amber}]}>
-            <Text style={[styles.avatarText, {color: colors.softWhite}]}>
+          <View style={[styles.avatar, { backgroundColor: colors.amber }]}>
+            <Text style={[styles.avatarText, { color: colors.softWhite }]}>
               {item.name.charAt(0).toUpperCase()}
             </Text>
           </View>
           <View style={styles.volunteerInfo}>
-            <Text style={[styles.volunteerName, {color: colors.softWhite}]}>
+            <Text style={[styles.volunteerName, { color: colors.softWhite }]}>
               {item.name}
             </Text>
-            <Text style={[styles.volunteerDist, {color: colors.mutedGray}]}>
+            <Text style={[styles.volunteerDist, { color: colors.mutedGray }]}>
               {item.dist} away
             </Text>
             <View style={styles.ratingRow}>
               {renderStars(item.rating)}
-              <Text style={[styles.ratingText, {color: colors.amber}]}>
+              <Text style={[styles.ratingText, { color: colors.amber }]}>
                 {item.rating}
               </Text>
             </View>
           </View>
         </View>
         <TouchableOpacity
-          style={[styles.alertButton, {backgroundColor: colors.tealGreen}]}
+          style={[styles.alertButton, { backgroundColor: colors.tealGreen }]}
           onPress={() => handleAlertVolunteer(item)}
-          activeOpacity={0.8}>
+          activeOpacity={0.8}
+        >
           <Icon name="notifications" size={16} color={colors.softWhite} />
-          <Text style={[styles.alertButtonText, {color: colors.softWhite}]}>
+          <Text style={[styles.alertButtonText, { color: colors.softWhite }]}>
             Alert Volunteer
           </Text>
         </TouchableOpacity>
@@ -395,36 +464,49 @@ const VolunteersTab = () => {
   );
 
   return (
-    <View style={[styles.tabContainer, {backgroundColor: colors.primary}]}>
-      <View style={[styles.miniMap, {backgroundColor: colors.deepNavy}]}>
+    <View style={[styles.tabContainer, { backgroundColor: colors.primary }]}>
+      <View style={[styles.miniMap, { backgroundColor: colors.deepNavy }]}>
         <Icon name="map" size={48} color={colors.mutedGray} />
-        <Text style={[styles.mapOverlayText, {color: colors.mutedGray}]}>
+        <Text style={[styles.mapOverlayText, { color: colors.mutedGray }]}>
           Volunteer Locations (Coming Soon)
         </Text>
       </View>
-      
+
       <View style={styles.trackMeContainer}>
         <View style={styles.trackMeInfo}>
           <Icon name="locate" size={20} color={colors.tealGreen} />
-          <Text style={[styles.trackMeText, {color: colors.softWhite}]}>
+          <Text style={[styles.trackMeText, { color: colors.softWhite }]}>
             Allow volunteers to track me
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.trackMeToggle, {backgroundColor: trackMeEnabled ? colors.tealGreen : colors.mutedGray}]}
+          style={[
+            styles.trackMeToggle,
+            {
+              backgroundColor: trackMeEnabled
+                ? colors.tealGreen
+                : colors.mutedGray,
+            },
+          ]}
           onPress={toggleTrackMe}
-          activeOpacity={0.8}>
-          <View style={[styles.trackMeKnob, {
-            transform: [{translateX: trackMeEnabled ? 20 : 0}],
-            backgroundColor: colors.softWhite,
-          }]} />
+          activeOpacity={0.8}
+        >
+          <View
+            style={[
+              styles.trackMeKnob,
+              {
+                transform: [{ translateX: trackMeEnabled ? 20 : 0 }],
+                backgroundColor: colors.softWhite,
+              },
+            ]}
+          />
         </TouchableOpacity>
       </View>
-      
+
       <FlatList
         data={volunteers}
         renderItem={renderVolunteer}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.volunteerList}
         refreshControl={
           <RefreshControl
@@ -441,13 +523,16 @@ const VolunteersTab = () => {
 
 // Main CircleScreen with Material Top Tabs
 const CircleScreen = () => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.primary}]} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.primary }]}
+      edges={['top']}
+    >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.title, {color: colors.softWhite}]}>
+        <Text style={[styles.title, { color: colors.softWhite }]}>
           My Circle & Community
         </Text>
       </View>
@@ -472,19 +557,20 @@ const CircleScreen = () => {
           tabBarActiveTintColor: colors.tealGreen,
           tabBarInactiveTintColor: colors.mutedGray,
           tabBarScrollEnabled: true,
-        }}>
-        <Tab.Screen 
-          name="Emergency" 
+        }}
+      >
+        <Tab.Screen
+          name="Emergency"
           component={EmergencyContactsTab}
           options={{ tabBarLabel: 'Emergency Contacts' }}
         />
-        <Tab.Screen 
-          name="Tracking" 
+        <Tab.Screen
+          name="Tracking"
           component={ImTrackingTab}
           options={{ tabBarLabel: "I'm Tracking" }}
         />
-        <Tab.Screen 
-          name="Volunteers" 
+        <Tab.Screen
+          name="Volunteers"
           component={VolunteersTab}
           options={{ tabBarLabel: 'Volunteers' }}
         />
@@ -496,6 +582,7 @@ const CircleScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 100,
   },
   header: {
     paddingHorizontal: 20,
@@ -539,7 +626,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
@@ -595,7 +682,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     elevation: 8,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     zIndex: 999,
@@ -617,7 +704,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     elevation: 4,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },

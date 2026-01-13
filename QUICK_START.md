@@ -1,5 +1,22 @@
 # 🚀 SafeRoute - Quick Start Guide
 
+## 🚨 CRITICAL: Windows Path Length Error Fix
+
+**If you're getting this error:**
+```
+ninja: error: Stat(...): Filename longer than 260 characters
+```
+
+**DO THIS FIRST:**
+1. Open PowerShell **as Administrator**
+2. Run: `.\enable-long-paths.ps1`
+3. **Restart your computer**
+4. Then continue with setup below
+
+📄 See [FIX_LONG_PATH_ERROR.md](FIX_LONG_PATH_ERROR.md) for detailed instructions.
+
+---
+
 ## ✅ Setup Complete!
 
 Your React Native app is ready to run! Metro bundler is currently running.
